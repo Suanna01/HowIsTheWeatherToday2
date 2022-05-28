@@ -1,0 +1,79 @@
+{# 기본 html 틀 #}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no"> {# 모바일에서도 호환되게 해줌 #}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> {# IE 문서 모드, IE=edge는 IE브라우저에서 가장 최신 선택하는 것 #}
+    <link rel="stylesheet" href="/main.css">
+</head>
+<nav>
+    <ul>
+        <li class="logo">오늘 날씨 어때?</li>
+        <div class="items">
+            <li><a href="/">Home</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <li><a href="/mypage">My Page</a></li>
+            <li><a href="/upload">Upload</a></li>
+        </div>
+        <li class="search-icon">
+            <input type="search" placeholder="Search">
+            <label class="icon">
+                <span class="fas fa-search"></span>
+            </label>
+        </li>
+    </ul>
+</nav>
+
+<body>
+    <div class="container">
+        <div class="profile-wrap">
+            <div class="profile">
+                {% if user and user.id %} {# 렌더링 시 user가 존재하면 사용자 정보, 팔로잉, 팔로워 수를 보여줌 #}
+                <div class="user-name">{{'안녕하세요! ' + user.nick +'님'}}</div>
+                <div class="half">
+                    <div>팔로잉</div>
+                    <div class="count following-count">{{followingCount}}</div>
+                </div>
+                <div class="half">
+                    <div>팔로워</div>
+                    <div class="count follower-count">{{followerCount}}</div>
+                </div>
+                <input id="my-id" type="hidden" value="{{user.id}}">
+                <a id="my-profile" href="/profile" class="btn">내 프로필</a>
+                <a id="logout" href="/auth/logout" class="btn">로그아웃</a>
+                {% else %} {# 렌더링 시 user가 존재하지 않으면 로그인이 되어있지x -> 로그인 메뉴를 보여줌 #}
+                <form id="login-form" action="/auth/login" method="post">
+                    <div class="input-group">
+                        <label for="email">이메일</label>
+                        <input id="email" type="email" name="email" required autofocus>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">비밀번호</label>
+                        <input id="password" type="password" name="password" required>
+                    </div>
+                    <a id="join" href="/join" class="btn">회원가입</a>
+                    <button id="login" type="submit" class="btn">로그인</button>
+                    <a id="kakao" href="/auth/kakao" class="btn">카카오톡</a>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        {% block content %}
+        {% endblock %}
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        window.onload = () => {
+            if (new URL(location.href).searchParams.get('loginError')) {
+                alert(new URL(location.href).searchParams.get('loginError'));
+            }
+        };
+    </script>
+    {% block script %}
+    {% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+{# 팔로잉, 팔로워 목록 보여줌 #}
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="profile-wrap">
+        <div class="profile">
+            <form id="twit-form" action="/auth/modifyUser" method="post">
+                <div class="input-group">
+                    <label>닉네임 수정</label>
+                    <input id="twit-profile" name="usernick" maxlength="15"></input> 
+                </div>
+                <button id="twit-btn" type="submit" class="btn">수정하기</button> {# type이 submit이면 form의 action의 주소가 실행됨 #}
+            </form>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <div class="followings half">
+        <h2>팔로잉 목록</h2>
+        {% if user.Followings %} 
+            {% for following in user.Followings %} 
+                <div>{{following.nick}}</div>
+                <div id="unfollow" onClick='removeFollowing({{following.id}})' class="btn">팔로잉 끊기</div>
+            {% endfor %}
+        {% endif %}
+        </div>
+        <div class="followers half">
+            <h2>팔로워 목록</h2>
+            {% if user.Followers %} 
+            {% for follower in user.Followers %} 
+            <div>{{follower.nick}}</div>
+            {% endfor %} 
+            {% endif %} 
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block script %}
+    <script>
+
+        async function removeFollowing(followingId){
+            await axios.post(`/user/unfollow`,{
+                followingId,
+           }).then((res)=>{
+               if(res.data.status==="true"){
+                   location.reload();
+               }
+           })
+        }    
+
+         {# async function modifyUser(){
+           await axios.post(`/auth/modifyUser`,{
+
+           }).then((res)=>{
+               if(res.data.status==="true"){
+                   location.reload();
+               }
+           })
+       } #}
+
+    </script>
+{% endblock %}    
