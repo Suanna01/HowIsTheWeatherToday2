@@ -1,9 +1,3 @@
-/*const express = require('express');
-const router = express.Router();
-router.get("/profile", (req, res) => {
-    res.render("upload");
-});*/
-
 // app.js에서 기본 router로 설정한 page.js
 const express = require('express');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares'); // 구조분해할당으로 middlewares의 두 미들웨어를 가져옴

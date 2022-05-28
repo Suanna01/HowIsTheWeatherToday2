@@ -22,7 +22,7 @@ const userRouter = require('./routes/user');
 // navbar 라우터
 const weatherRouter = require('./routes/weather');
 const mypageRouter = require('./routes/mypage');
-const uploadRouter = require('./routes/upload');
+
 
 
 
@@ -82,7 +82,7 @@ app.use('/user', userRouter);
 //navbar 라우터 연결
 app.use('/weather', weatherRouter);
 app.use('/mypage', mypageRouter);
-app.use('/upload', uploadRouter);
+
 
 
 // 라우터가 없을 때 실행 
@@ -103,3 +103,17 @@ app.use((err, req, res, next) => {
 app.listen(app.get('port'), () => {
     console.log(app.get('port'), '번 포트에서 대기 중');
 });
+
+
+
+
+
+
+/* mysql - h34.64.85.189 - u cc - p
+use recipe_db
+show tables;
+select * from posts; */
+
+//npx sequelize db:create
+
+//npm i passport passport-local passport-kakao bcrypt

@@ -21,30 +21,6 @@ router.use((req, res, next) => {
     next();
 });
 
-// http://127.0.0.1:8001/hashtag 에 get요청이 왔을 때
-router.get('/hashtag', async (req, res, next) => {
-    const query = req.query.hashtag; // router.get은 req.body를 쓰지 않고 req.query로 값 전달
-    if (!query) { // query가 없는 경우(해시태그가 없는 경우)
-        return res.redirect('/'); // 메인페이지로 돌려보냄
-    }
-    // query가 있는 경우(해시태그가 있는 경우)
-    try {
-        const hashtag = await Hashtag.findOne({
-            where: { title: query }
-        }); // 해당 query 값이 Hashtag 테이블에 있는지 검색  
-        let posts = [];
-        if (hashtag) {
-            posts = await hashtag.getPosts({ include: [{ model: User }] }); // 있으면 해당 해시태그를 가진 모든 게시글을 가져옴
-        }
-        return res.render('main', {
-            title: `${query}|sns`,
-            twits: posts, // 조회 후 views/main.html 페이지를 렌더링하면서 전체 게시글 대신 조회된 게시글만 twits에 넣어 렌더링 함 
-        });
-    } catch (error) {
-        console.error(error);
-        return next(error);
-    }
-});
 
 // http://127.0.0.1:8001/profile 에 get요청이 왔을 때
 router.get("/profile", isLoggedIn, (req, res) => {
@@ -58,22 +34,7 @@ router.get("/join", isNotLoggedIn, (req, res) => {
 
 // http://127.0.0.1:8001/ 에 get요청이 왔을 때
 router.get('/', async (req, res, next) => {
-    try {
-        const posts = await Post.findAll({ // db에서 게시글을 조회 
-            include: {
-                model: User,
-                attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
-            },
-            order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
-        });
-        res.render("main", {
-            title: "sns",
-            twits: posts, // 조회 후 views/main.html 페이지를 렌더링할 때 전체 게시글을 twits 변수로 저장 
-        });
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
+    res.render("layout");
 });
 
 module.exports = router;
