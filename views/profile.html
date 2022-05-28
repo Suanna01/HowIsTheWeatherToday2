@@ -32,6 +32,12 @@
             {% endfor %} 
             {% endif %} 
         </div>
+        <div>
+            <form action="/auth/delUser" method="post"> 
+                <button id="twit-btn" type="submit" class="btn"
+                onclick="return confirm('정말로 회원 탈퇴 하시겠습니까?')">탈퇴하기</button>
+            </form>
+        </div>
     </div>
 {% endblock %}
 

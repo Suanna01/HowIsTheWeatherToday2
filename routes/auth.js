@@ -55,19 +55,30 @@ router.post('/login', isNotLoggedIn, (req, res, next) =>{ // 콜백 함수 실�
     })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙힘
 });
 
-/*
-router.post('/login',passport.authenticate('local',{
-    failureRedirect:'/',
-}),(req,res)=>{
-    res.redirect('/');
-})
-*/
 
 // 로그아웃 라우터, /auth/logout
 router.get('/logout', isLoggedIn, (req, res) => {
-    req.logout(); // req.user 객체를 제거함
     req.session.destroy(); // req.session 객체의 내용을 제거함 -  세션 정보를 지움
+    if(err) throw err;
     res.redirect('/'); // 메인 페이지로 돌아감
+});
+
+// 회원 탈퇴 라우터, /auth/delUser
+router.post('/delUser', isLoggedIn, async (req, res, next) => {
+    try {
+        const userid =  req.user.id;
+        if(!req.user.id)return res.json({status:'false'});
+        await User.destroy({
+            where:{
+                id: userid,
+            }
+        });
+        return res.redirect('/');
+    }
+    catch (error){
+        console.error(error);
+        next(error);
+    }
 });
 
 // 카카오 로그인 라우터, /auth/kakao
