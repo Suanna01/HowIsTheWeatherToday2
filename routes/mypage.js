@@ -30,7 +30,7 @@ router.get('/hashtag', async (req, res, next) => {
         if (hashtag) {
             posts = await hashtag.getPosts({ include: [{ model: User }] }); // 있으면 해당 해시태그를 가진 모든 게시글을 가져옴
         }
-        return res.render('main', {
+        return res.render('mypage', {
             title: `${query}|sns`,
             twits: posts, // 조회 후 views/main.html 페이지를 렌더링하면서 전체 게시글 대신 조회된 게시글만 twits에 넣어 렌더링 함 
         });
@@ -60,7 +60,7 @@ router.get('/', async (req, res, next) => {
             },
             order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
         });
-        res.render("main", {
+        res.render("mypage", {
             title: "sns",
             twits: posts, // 조회 후 views/main.html 페이지를 렌더링할 때 전체 게시글을 twits 변수로 저장 
         });
