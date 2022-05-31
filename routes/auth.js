@@ -58,9 +58,10 @@ router.post('/login', isNotLoggedIn, (req, res, next) =>{ // 콜백 함수 실�
 
 // 로그아웃 라우터, /auth/logout
 router.get('/logout', isLoggedIn, (req, res) => {
-    req.session.destroy(); // req.session 객체의 내용을 제거함 -  세션 정보를 지움
-    if(err) throw err;
-    res.redirect('/'); // 메인 페이지로 돌아감
+    req.session.destroy(function(err){
+        if(err) throw err;
+        res.redirect('/');
+    });
 });
 
 // 회원 탈퇴 라우터, /auth/delUser
