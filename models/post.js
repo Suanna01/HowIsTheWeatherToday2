@@ -27,5 +27,7 @@ module.exports = class Post extends Sequelize.Model {
         db.Post.belongsToMany(db.Hashtag, {through: 'PostHashtag'}); // N(Post):M(Hashtag) 관계, PostHashtag 테이블(중간 모델) 생성
                                                                     // PostHashtag에는 postId, hashtagId라는 foreignKey가 생성됨, 
                                                                     // as는 따로 지정하지 않았으므로 post.getHashtags, post.addHashtags, hashtags.getPosts 같은 기본 이름의 관계 메서드들이 생성됨  
-    }
+        db.User.belongsToMany(db.Post, {foreignKey: 'userId', as: { singular: 'Lke', plural: 'Lkes'}, through: 'Like'});
+        db.Post.belongsToMany(db.User, {through: 'Like', as: 'Liker'}); 
+        };   
 };

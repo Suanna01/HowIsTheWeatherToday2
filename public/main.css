@@ -121,6 +121,25 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
 #hashtag-form {text-align: right;}
 footer { text-align: center;}
 
+.like{
+    padding: 1px 5px;
+    background: #fff;
+    border: 1px solid silver;
+    border-radius: 5px;
+    color: rgb(130, 3, 3);
+    font-size: 12px;
+    cursor: pointer;
+}
+.unlike{
+    padding: 1px 5px;
+    background: #fff;
+    border: 1px solid silver;
+    border-radius: 5px;
+    color: rgb(100, 19, 187);
+    font-size: 12px;
+    cursor: pointer;
+}
+
 /* navbar css */
 @import url('https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous');
 *{

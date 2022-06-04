@@ -47,7 +47,21 @@
                 {% if user.id == twit.User.id %}
                 <div id="twit-remove" onClick='removePost({{twit.User.id}}, {{twit.id}}, {{user.id}})' class="btn">삭제하기</div> 
                 {% endif %}
+                {% if not likerIdList.includes(twit.User.id) and twit.User.id !== user.id %}
+                {% if user and not like %}
+                <button class = "like">좋아요</button>
+                {% endif %}
+
+                {% if user and like %}
+                <div id="unfollow" onClick='removeLiker({{following.id}})' class="btn">팔로잉 끊기</div>
+                {% endif %}
+
+                
+                <button class = "unlike">좋아요 취소</button>
+                {% endif %}
+                {% endif %}
             </div>
+
         {% endfor %}
         </div>
     </div>
@@ -55,7 +69,7 @@
 
 {% block script %}
     <script>
-       async function removePost(twituserid, twitid, userid){
+       async function Post(twituserid, twitid, userid){
            await axios.post(`/post/postOneRemove`,{
                twituserid,
                twitid,
@@ -103,6 +117,44 @@
                             }); 
                         }
                     }
+                }
+            });
+        });
+
+        document.querySelectorAll('.like').forEach(function(tag) { 
+            tag.addEventListener('click', function() {
+                var myId = document.querySelector('#my-id'); // myId는 현재 로그인한 사용자, layout.html에 있는 <input id="my-id" type="hidden" value="{{user.id}}">
+                var twitId = tag.parentNode.querySelector('.twit-id').value;
+                if(myId){           
+                    var xhr = new XMLHttpRequest();       
+                    xhr.onload = function() {
+                        if(xhr.status == 200) {
+                            location.reload();
+                        } else {
+                            console.error(xhr.responseText);
+                        }
+                    };
+                    xhr.open('POST', '/post/', + twitID + '/like');                        
+                    xhr.send();
+                }
+            });
+        });
+
+        document.querySelectorAll('.unlike').forEach(function(tag) { 
+            tag.addEventListener('click', function() {
+                var myId = document.querySelector('#my-id'); // myId는 현재 로그인한 사용자, layout.html에 있는 <input id="my-id" type="hidden" value="{{user.id}}">
+                var twitId = tag.parentNode.querySelector('.twit-id').value;
+                if(myId){           
+                    var xhr = new XMLHttpRequest();       
+                    xhr.onload = function() {
+                        if(xhr.status == 200) {
+                            location.reload();
+                        } else {
+                            console.error(xhr.responseText);
+                        }
+                    };
+                    xhr.open('DELETE', '/post/', + twitID + '/like');                        
+                    xhr.send();
                 }
             });
         });

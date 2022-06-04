@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const { Post, Hashtag } = require('../models');
+const { Post, Hashtag, User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
@@ -87,6 +87,30 @@ router.post('/postOneRemove', async (req, res, next) => {
         console.error(err);
     }
     
+});
+
+router.post('/like', async(req, res, next) => {
+    try {
+        const post = await Post.find({where: {id: req.params.id}});
+        await post.addLiker(req.user.id);
+        //const like = twit && twit.Liker.map(l => l.id).includes(user.id);
+        res.send('OK');
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
+
+router.delete('/like', async (req, res, next) => {
+    try {
+        const post = await Post.find({where: {id: req.params.id}});
+        await post.Liker(req.user.id);
+        //const like = twit && twit.Liker.map(l => l.id).includes(user.id);
+        res.send('OK');
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
 });
 
 module.exports = router;

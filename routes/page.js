@@ -12,6 +12,7 @@ router.use((req, res, next) => {
   res.locals.followerCount = req.user ? req.user.Followers.length : 0; // 유저가 있는 경우 팔로워 수를 저장
   res.locals.followingCount = req.user ? req.user.Followings.length : 0;
   res.locals.followerIdList = req.user ? req.user.Followings.map(f => f.id) : []; // 팔로워 아이디 리스트를 넣는 이유 -> 팔로워 아이디 리스트에 게시글 작성자의 아이디가 존재하지 않으면 팔로우 버튼을 보여주기 위함
+  res.locals.likerIdList = req.post ? req.post.Liker.map(l => l.id) : [];
   next();
 });
 
@@ -52,22 +53,29 @@ router.get("/join", isNotLoggedIn, (req, res) => {
 
 // http://127.0.0.1:8001/ 에 get요청이 왔을 때
 router.get('/', async (req, res, next) => {
-  try {
-    const posts = await Post.findAll({ // db에서 게시글을 조회 
-      include: {
+    try{
+      const posts = await Post.findAll({ // db에서 게시글을 조회 
+      include: [{
         model: User,
-        attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
-      },
-      order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
+        attributes: ['id', 'nick'], // id와 닉네임을 join해서 제공    
+      }, 
+      //order: [["createdAt", "DESC"]],// 게시글의 순서를 최신순으로 정렬
+      {
+      model: User,
+      attributes: ['id', 'nick'],
+      as: 'Liker',
+      }]
     });
-    res.render("main", {
-      title: "sns",
-      twits: posts, // 조회 후 views/main.html 페이지를 렌더링할 때 전체 게시글을 twits 변수로 저장 
-    });
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+      //.then((posts) => {
+       console.log(posts);  
+       res.render('main', {
+       title: 'sns',
+       twits: posts,
+      });
+    } catch (err) {
+      console.error(err);
+     next(err);
+    }
 });
 
 module.exports = router;

@@ -38,6 +38,7 @@ module.exports = class User extends Sequelize.Model { // User 모델을 만들�
         });
     }
     static associate(db) {  // 다른 모델과의 관계 <-> static init: 테이블에 대한 설정
+        //db.User.belongsToMany(db.Post, {foreignKey: 'userId', as: { singular: 'Lke', plural: 'Lkes'}, through: 'Like'}); // N(Post):M(Like) 관계
         db.User.hasMany(db.Post); // user과 post는 1:N관계
         // User과 User는 N:M관계 (팔로잉 기능 - 팔로워, 팔로우)
         // 같은 테이블 간 N:M은 모델 이름과 컬럼 이름을 따로 정해야 함
