@@ -8,9 +8,6 @@ const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
 const passport = require('passport');
 
-//내가 추가
-const expressLayouts = require('express-ejs-layouts');
-
 
 
 dotenv.config(); // .env 파일을 쓸 수 있게 함
@@ -19,6 +16,8 @@ const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const commentRouter = require('./routes/comment');
+
 // navbar 라우터
 const weatherRouter = require('./routes/weather');
 const mypageRouter = require('./routes/mypage');
@@ -79,6 +78,8 @@ app.use('/', pageRouter);
 app.use('/auth', authRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/comment', commentRouter);
+
 //navbar 라우터 연결
 app.use('/weather', weatherRouter);
 app.use('/mypage', mypageRouter);
