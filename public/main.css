@@ -116,6 +116,15 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
 .twit-img { text-align: center;}
 .twit-img img { max-width: 75%;}
 .error-message { color: red; font-weight: bold;}
+.weatherBox{
+    width: 200px; height: 200px;
+    float: left;
+    margin: 0 auto;
+    border: solid; border-color: #9ACfff;
+    font-size: 15px;
+    background: white;
+    text-align: center; line-height: 55px;
+}
 #search-form {text-align: right;}
 #join-form { padding: 10px; text-align: center;}
 #hashtag-form {text-align: right;}
@@ -203,3 +212,4 @@ nav ul .search-icon .icon span {
         flex:4;
     }
 }
+

@@ -10,9 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "-": "^0.0.1",
+    "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
+    "cheerio": "^1.0.0-rc.11",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.1",
+    "env": "^0.0.2",
     "express": "^4.18.1",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.17.3",
@@ -26,6 +29,7 @@
     "passport": "^0.6.0",
     "passport-kakao": "^1.0.1",
     "passport-local": "^1.0.0",
+    "request": "^2.88.2",
     "sequelize": "^6.19.2",
     "sequelize-cli": "^6.4.1"
   },

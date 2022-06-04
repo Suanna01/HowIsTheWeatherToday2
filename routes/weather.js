@@ -1,40 +1,84 @@
-/*const express = require('express');
-const router = express.Router();
-router.get("/profile", (req, res) => {
-    res.render("weather");
-});*/
-
-// app.js에서 기본 router로 설정한 page.js
 const express = require('express');
-const { isLoggedIn, isNotLoggedIn } = require('./middlewares'); // 구조분해할당으로 middlewares의 두 미들웨어를 가져옴
-const { Post, User, Hashtag } = require('../models');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const qs = require("querystring");
 
 const router = express.Router();
 
-// 모든 요청마다 실행
-router.use((req, res, next) => {
-    // res.locals.user = null;  // res.locals는 변수를 모든 템플릿 엔진에서 공통으로 사용, 즉 user는 전역 변수로 이해하면 됨(아래도 동일)
-    res.locals.user = req.user; // 요청으로 온 유저를 넌적스에 연결
-    res.locals.followerCount = req.user ? req.user.Followers.length : 0; // 유저가 있는 경우 팔로워 수를 저장
-    res.locals.followingCount = req.user ? req.user.Followings.length : 0;
-    res.locals.followerIdList = req.user ? req.user.Followings.map(f => f.id) : []; // 팔로워 아이디 리스트를 넣는 이유 -> 팔로워 아이디 리스트에 게시글 작성자의 아이디가 존재하지 않으면 팔로우 버튼을 보여주기 위함
-    next();
-});
+router.get("/", (req,res) => {
+    //오늘 날짜
+    let day = new Date();
+    let month = day.getMonth() + 1;  // 월(month) 보정
+    let today = day.getFullYear() + '.' + month + '.' + day.getDate();
 
+    //지역에 따른 날씨
+    area ="성북구";
+    if(req.query.area == "강남구") area = "강남구";
+    else if (req.query.area == "강동구") area = "강동구"; 
+    else if (req.query.area == "강서구") area = "강서구";
+    else if (req.query.area == "강북구") area = "강북구"; 
+    else if (req.query.area == "관악구") area = "관악구"; 
+    else if (req.query.area == "광진구") area = "광진구"; 
+    else if (req.query.area == "구로구") area = "구로구"; 
+    else if (req.query.area == "금천구") area = "금천구"; 
+    else if (req.query.area == "노원구") area = "노원구"; 
+    else if (req.query.area == "도봉구") area = "도봉구"; 
+    else if (req.query.area == "동대문구") area = "동대문구"; 
+    else if (req.query.area == "동작구") area = "동작구"; 
+    else if (req.query.area == "마포구") area = "마포구"; 
+    else if (req.query.area == "서대문구") area = "서대문구"; 
+    else if (req.query.area == "서초구") area = "서초구"; 
+    else if (req.query.area == "성동구") area = "성동구"; 
+    else if (req.query.area == "성북구") area = "성북구"; 
+    else if (req.query.area == "송파구") area = "송파구"; 
+    else if (req.query.area == "양천구") area = "양천구"; 
+    else if (req.query.area == "영등포구") area = "영등포구"; 
+    else if (req.query.area == "용산구") area = "용산구"; 
+    else if (req.query.area == "은평구") area = "은평구"; 
+    else if (req.query.area == "종로구") area = "종로구"; 
+    else if (req.query.area == "중랑구") area = "중랑구"; 
+    else if (req.query.area == "중구") area = "중구";
+    let url = `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=" + ${qs.escape(area)} + "+%EB%82%A0%EC%94%A8`; 
 
-// http://127.0.0.1:8001/profile 에 get요청이 왔을 때
-router.get("/profile", isLoggedIn, (req, res) => {
-    res.render("profile", { title: "내 정보 - sns" });
-});
+    const getHtml = async () => {
+        // axios.get 함수를 이용하여 비동기로 html 파일을 가져온다    
+        try {    
+        return await axios
+        .get(url); 
+        } catch (error) {
+        console.error(error);
+        }
+    };
 
-// http://127.0.0.1:8001/join 에 get요청이 왔을 때
-router.get("/join", isNotLoggedIn, (req, res) => {
-    res.render("join", { title: "회원가입 - sns" });
-});
+    //네이버 날씨 검색 결과 크롤링
+    getHtml()
+    .then(html => {
+        let ulList = [];
+        const $ = cheerio.load(html.data);
+        const $nowTemp = $("div.temperature_text").find('strong').text();
+        const $maxTemp = $("div.cell_temperature span.temperature_inner").find('span.highest').text();
+        const $minTemp = $("div.cell_temperature span.temperature_inner").find('span.lowest').text();
+        const $sky = $("div.temperature_info").find('span.weather.before_slash').text();
+        const $now = $("div.relate_info._related_info dl.info").find('dd').text();
+        
+        //문자열 추출
+        let nowTemp = $nowTemp.substring(5, 10);
+        let maxTemp = $maxTemp.substring(4, 7);
+        let minTemp = $minTemp.substring(4, 7);
+        let now = $now.substring(12, 17);
+  
+        //Test
+        console.log(nowTemp);
+        console.log(maxTemp);
+        console.log(minTemp);
+        console.log($sky);
+        console.log(now);
+        console.log(url);
 
-// http://127.0.0.1:8001/ 에 get요청이 왔을 때
-router.get('/', async (req, res, next) => {
-    res.render("layout");
-});
+        res.render("weather", {title: "현재날씨 - sns",
+        nowTemp: nowTemp, maxTemp: maxTemp, minTemp: minTemp,
+        today: today, now: now, sky: $sky, area: area});
+    });
+})
 
 module.exports = router;

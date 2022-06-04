@@ -56,7 +56,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) =>{ // 콜백 함수 실�
 });
 
 
-// 로그아웃 라우터, /auth/logout
+//로그아웃 라우터, /auth/logout
 router.get('/logout', isLoggedIn, (req, res) => {
     req.session.destroy(function(err){
         if(err) throw err;
