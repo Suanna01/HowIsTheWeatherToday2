@@ -1,7 +1,7 @@
 // app.js에서 기본 router로 설정한 page.js
 const express = require('express');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares'); // 구조분해할당으로 middlewares의 두 미들웨어를 가져옴
-const { Post, User, Hashtag } = require('../models');
+const { Post, Comment, User, Hashtag } = require('../models');
 
 const router = express.Router();
 
@@ -30,7 +30,7 @@ router.get('/hashtag', async (req, res, next) => {
         if (hashtag) {
             posts = await hashtag.getPosts({ include: [{ model: User }] }); // 있으면 해당 해시태그를 가진 모든 게시글을 가져옴
         }
-        return res.render('mypage', {
+        return res.render('main', {
             title: `${query}|sns`,
             twits: posts, // 조회 후 views/main.html 페이지를 렌더링하면서 전체 게시글 대신 조회된 게시글만 twits에 넣어 렌더링 함 
         });
@@ -53,17 +53,35 @@ router.get("/join", isNotLoggedIn, (req, res) => {
 // http://127.0.0.1:8001/ 에 get요청이 왔을 때
 router.get('/', async (req, res, next) => {
     try {
-        const posts = await Post.findAll({ // db에서 게시글을 조회 
+        //게시글 조회
+        const posts = await Post.findAll({// db에서 게시글을 조회
+            include: {
+                model: Comment // 댓글 같이 얻어오기
+            },
+            include: {
+                model: User,
+                attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
+            },
+            where: {
+                UserId: req.user.id,
+            },
+            order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
+        });
+        //댓글 조회
+        const comments = await Comment.findAll({ // db에서 게시글을 조회 
             include: {
                 model: User,
                 attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
             },
             order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
         });
-        res.render("mypage", {
+
+        res.render("main", {
             title: "sns",
-            twits: posts, // 조회 후 views/main.html 페이지를 렌더링할 때 전체 게시글을 twits 변수로 저장 
+            twits: posts,
+            cmnts: comments// 조회 후 views/main.html 페이지를 렌더링할 때 전체 게시글을 twits 변수로 저장
         });
+
     } catch (err) {
         console.error(err);
         next(err);
