@@ -29,4 +29,8 @@ Post.associate(db);
 Hashtag.associate(db);
 Comment.associate(db);
 
+
+db.Post.hasMany(db.Comment);
+db.Comment.belongsTo(db.Post);
+
 module.exports = db;

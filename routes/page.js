@@ -8,8 +8,7 @@ const router = express.Router();
 // 모든 요청마다 실행
 router.use((req, res, next) => {
   // res.locals.user = null;  // res.locals는 변수를 모든 템플릿 엔진에서 공통으로 사용, 즉 user는 전역 변수로 이해하면 됨(아래도 동일)
-  res.locals.user = req.user;
-  res.locals.post = req.post; // 요청으로 온 유저를 넌적스에 연결
+  res.locals.user = req.user; // 요청으로 온 유저를 넌적스에 연결
   res.locals.followerCount = req.user ? req.user.Followers.length : 0; // 유저가 있는 경우 팔로워 수를 저장
   res.locals.followingCount = req.user ? req.user.Followings.length : 0;
   res.locals.followerIdList = req.user ? req.user.Followings.map(f => f.id) : []; // 팔로워 아이디 리스트를 넣는 이유 -> 팔로워 아이디 리스트에 게시글 작성자의 아이디가 존재하지 않으면 팔로우 버튼을 보여주기 위함
@@ -55,7 +54,8 @@ router.get("/join", isNotLoggedIn, (req, res) => {
 router.get('/', async (req, res, next) => {
   try {
     //게시글 조회
-    const posts = await Post.findAll({ // db에서 게시글을 조회 
+    const posts = await Post.findAll({// db에서 게시글을 조회
+
       include: {
         model: User,
         attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
@@ -64,21 +64,19 @@ router.get('/', async (req, res, next) => {
     });
     //댓글 조회
     const comments = await Comment.findAll({ // db에서 게시글을 조회 
-      include: [{
+      include: {
         model: User,
         attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
       },
-      {
-        model: Post,
-        attributes: ["id"]
-      }],
       order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
     });
+
     res.render("main", {
       title: "sns",
       twits: posts,
       cmnts: comments// 조회 후 views/main.html 페이지를 렌더링할 때 전체 게시글을 twits 변수로 저장
     });
+
   } catch (err) {
     console.error(err);
     next(err);

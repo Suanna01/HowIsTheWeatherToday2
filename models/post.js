@@ -10,7 +10,7 @@ module.exports = class Post extends Sequelize.Model {
             img: {
                 type: Sequelize.STRING(200),
                 allowNull: true,
-            }
+            },
         }, {
             sequelize,
             timestamps: true,

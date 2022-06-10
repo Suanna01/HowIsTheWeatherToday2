@@ -34,7 +34,7 @@ module.exports = class User extends Sequelize.Model { // User 모델을 만들�
             tableName: 'users',
             paranoid: false, // 컬럼을 지워도 완전히 지워지지 않고 deletedAt이라는 컬럼이 생김(지운 시각이 기록됨)
             charset: 'utf8',
-            collate: 'uetf8_general_ci',
+            collate: 'utf8_general_ci',
         });
     }
     static associate(db) {  // 다른 모델과의 관계 <-> static init: 테이블에 대한 설정

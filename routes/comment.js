@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 
-const { Comment } = require('../models');
+const { Comment, Post } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
@@ -10,23 +10,28 @@ const router = express.Router();
 
 
 // POST /comment 라우터, 댓글 업로드 처리
-router.post('/', isLoggedIn, async (req, res, next) => {
-    try {
+router.post('/:postId', isLoggedIn, async (req, res, next) => {
+    try { // 팔로우 할 사용자(post 작성자)를 db에서 user id로 조회 
+        const postId = req.params.postId;
         const comment = await Comment.create({
             content: req.body.content,
             UserId: req.user.id,
-            PostId: req.post.id,
+            PostId: postId,
         });
+
+
         res.redirect('/');
+
     } catch (error) {
-        console.error(error);
         next(error);
     }
 });
 
 
-// POST /post/postOneRemove 라우터, 게시글 업로드 처리
-router.post('/commentOneRemove', async (req, res, next) => {
+
+
+// POST /post/postOneRemove 라우터, 댓글 업로드 처리
+router.post('/:postId/commentOneRemove', async (req, res, next) => {
     // , isLoggedIn
     try {
         const { cmntuserid, cmntid, userid } = req.body;
@@ -47,6 +52,7 @@ router.post('/commentOneRemove', async (req, res, next) => {
     }
 
 });
+
 
 
 
