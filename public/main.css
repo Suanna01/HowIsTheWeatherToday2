@@ -69,6 +69,13 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
     background: rgb(154, 207, 255);
     overflow: hidden;
 }
+
+#comment-form {
+    border-bottom: 1px solid silver;
+    padding: 10px;
+    background: rgb(237, 237, 237);
+    overflow: hidden;
+}
 #img-preview { max-width: 100%;}
 #img-label {
     float: left;

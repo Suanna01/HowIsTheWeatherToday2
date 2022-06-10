@@ -2,85 +2,86 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <input type="hidden" value="{{twit.User.id}}" class="twit-user-id">
-    <input type="hidden" value="{{twit.id}}" class="twit-id">
-    <div class="timeline">
-        {% if twit.User.id == user.id %} {# 작성자를 제외하고, 나의 팔로워 아이디 목록에 작성자의 아이디가 없으면 팔로우 버튼을 보여주기 위함 #}
+<input type="hidden" value="{{twit.User.id}}" class="twit-user-id">
+<input type="hidden" value="{{twit.id}}" class="twit-id">
+<div class="timeline">
+    {% if twit.User.id == user.id %} {# 작성자를 제외하고, 나의 팔로워 아이디 목록에 작성자의 아이디가 없으면 팔로우 버튼을 보여주기 위함 #}
 
-        {% for twit in twits %} {# 렌더링 시 twits 배열 안의 요소들을 읽어서 게시글로 만듦 #}
-            <div class="twit">
-                
-                {# followerIdList: routes/page.js에서 res.locals에서 넣은 변수 #}
-                
-                    <div class="twit-author">{{twit.User.nick}}</div>
-                    <div class="twit-content">{{twit.content}}</div>
-                    {% if twit.img %} 
-                        <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
-                    {% endif %}
-                    {# <button class="twit-remove">삭제하기</button> #}
-                    {% if user.id == twit.User.id %}
-                    <div id="twit-remove" onClick='removePost({{twit.User.id}}, {{twit.id}}, {{user.id}})' class="btn">삭제하기</div> 
-                    {% endif %}
-                          
-            </div>
-        {% endfor %}
+    {% for twit in twits %} {# 렌더링 시 twits 배열 안의 요소들을 읽어서 게시글로 만듦 #}
+    <div class="twit">
+
+        {# followerIdList: routes/page.js에서 res.locals에서 넣은 변수 #}
+
+        <div class="twit-author">{{twit.User.nick}}</div>
+        <div class="twit-content">{{twit.content}}</div>
+        {% if twit.img %}
+        <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
+        {% endif %}
+        {# <button class="twit-remove">삭제하기</button> #}
+        {% if user.id == twit.User.id %}
+        <div id="twit-remove" onClick='removePost("{{twit.User.id}}", "{{twit.id}}", "{{user.id}}")' class="btn">삭제하기
         </div>
+        {% endif %}
+
     </div>
-    {% endif %}
-{% endblock %} 
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+{% endblock %}
 
 {% block script %}
-    <script>
-       async function removePost(twituserid, twitid, userid){
-           await axios.post(`/post/postOneRemove`,{
-               twituserid,
-               twitid,
-               userid,
-           }).then((res)=>{
-               if(res.data.status==="true"){
-                   location.reload();
-               }
-               else if(res.data.status==="not equal user"){
-                   alert(userid+"님이 작성한 글이 아닙니다!");
-               }
-           })
-       }
+<script>
+    async function removePost(twituserid, twitid, userid) {
+        await axios.post(`/post/postOneRemove`, {
+            twituserid,
+            twitid,
+            userid,
+        }).then((res) => {
+            if (res.data.status === "true") {
+                location.reload();
+            }
+            else if (res.data.status === "not equal user") {
+                alert(userid + "님이 작성한 글이 아닙니다!");
+            }
+        })
+    }
 
-        if(document.getElementById('img')){
-            document.getElementById('img').addEventListener('change', function(e){
-                const formData = new FormData();
-                console.log(this, this.files);
-                formData.append('img', this.files[0]);  // 서버에 있는 가장 첫 번째 multer 파일 업로드, 썸네일 추가
-                                                        // formData.append(key, value)인데 key에 있는 변수를 서버에서도 사용해야 함, this는 e.target  
-                axios.post('/post/img', formData) // 두 번째 인수에 데이터를 넣어서 보냄, routes/`post.js`의 post('/img') 실행
-                    .then((res)=>{
-                        document.getElementById('img-url').value = res.data.url; // url: `/img/${req.file.filename}`
-                        document.getElementById('img-preview').src = res.data.url;
-                        document.getElementById('img-preview').style.display = 'inline';
-                    })
-                    .catch((err)=>{
-                        console.error(err);
-                    });
-            });
-        }
-        document.querySelectorAll('.twit-follow').forEach(function(tag) { // document의 모든 twit-follow class에 click eventlistener 추가 
-            tag.addEventListener('click', function() {
-                const myId = document.querySelector('#my-id'); // myId는 현재 로그인한 사용자, layout.html에 있는 <input id="my-id" type="hidden" value="{{user.id}}">
-                if(myId){
-                    const userId = tag.parentNode.querySelector('.twit-user-id').value; // parentNode는 "class=twit"임. 즉, 바로 위의 div를 뜻함
-                    if(userId !== myId.value){
-                        if(confirm('팔로잉하시겠습니까?')){
-                            axios.post(`user/${userId}/follow`) // post 작성자
-                            .then(() =>{
+    if (document.getElementById('img')) {
+        document.getElementById('img').addEventListener('change', function (e) {
+            const formData = new FormData();
+            console.log(this, this.files);
+            formData.append('img', this.files[0]);  // 서버에 있는 가장 첫 번째 multer 파일 업로드, 썸네일 추가
+            // formData.append(key, value)인데 key에 있는 변수를 서버에서도 사용해야 함, this는 e.target  
+            axios.post('/post/img', formData) // 두 번째 인수에 데이터를 넣어서 보냄, routes/`post.js`의 post('/img') 실행
+                .then((res) => {
+                    document.getElementById('img-url').value = res.data.url; // url: `/img/${req.file.filename}`
+                    document.getElementById('img-preview').src = res.data.url;
+                    document.getElementById('img-preview').style.display = 'inline';
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        });
+    }
+    document.querySelectorAll('.twit-follow').forEach(function (tag) { // document의 모든 twit-follow class에 click eventlistener 추가 
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id'); // myId는 현재 로그인한 사용자, layout.html에 있는 <input id="my-id" type="hidden" value="{{user.id}}">
+            if (myId) {
+                const userId = tag.parentNode.querySelector('.twit-user-id').value; // parentNode는 "class=twit"임. 즉, 바로 위의 div를 뜻함
+                if (userId !== myId.value) {
+                    if (confirm('팔로잉하시겠습니까?')) {
+                        axios.post(`user/${userId}/follow`) // post 작성자
+                            .then(() => {
                                 location.reload();
                             })
-                            .catch((err)=>{
+                            .catch((err) => {
                                 console.error(err);
-                            }); 
-                        }
+                            });
                     }
                 }
-            });
+            }
         });
-    </script>
-{% endblock %}    
+    });
+</script>
+{% endblock %}

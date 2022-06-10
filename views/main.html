@@ -57,7 +57,7 @@
             {# 1. user가 존재하는 경우 #}
             {% if user %}
             <div>
-                <form id="twit-form" action="/comment/{{twit.id}}" method="post">
+                <form id="comment-form" action="/comment/{{twit.id}}" method="post">
                     <div class="input-group">
                         <textarea id="twit" name="content" maxlength="100"></textarea> {# req.body.content #}
                     </div>

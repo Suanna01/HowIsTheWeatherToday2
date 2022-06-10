@@ -15,14 +15,10 @@
         <div class="items">
             <li><a href="/">Home</a></li>
             <li><a href="/weather">Weather</a></li>
+            {% if user and user.id %}
             <li><a href="/mypage">My Page</a></li>
+            {%endif%}
         </div>
-        <li class="search-icon">
-            <input type="search" placeholder="Search">
-            <label class="icon">
-                <span class="fas fa-search"></span>
-            </label>
-        </li>
     </ul>
 </nav>
 
