@@ -64,10 +64,10 @@ router.get('/', async (req, res, next) => {
         model: User,
         attributes: ['id', 'nick'],
         as: 'Liker',
-      }]
-      //order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
+      }],
+      order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
     });
-    console.log(posts); 
+    console.log(posts);
     //댓글 조회
     const comments = await Comment.findAll({ // db에서 게시글을 조회 
       include: {
@@ -75,7 +75,7 @@ router.get('/', async (req, res, next) => {
         attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
       },
       order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
-    
+
     });
     res.render("main", {
       title: "sns",
