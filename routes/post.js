@@ -91,8 +91,8 @@ router.post('/postOneRemove', async (req, res, next) => {
 
 router.post('/like', async(req, res, next) => {
     try {
-        const post = await Post.find({where: {id: req.params.id}});
-        await post.addLiker(req.user.id);
+        const post = await Post.findOne({where: {id: req.params.id}});
+        await post.addLikers(req.user.id);
         //const like = twit && twit.Liker.map(l => l.id).includes(user.id);
         res.send('OK');
     } catch (error) {
@@ -103,8 +103,8 @@ router.post('/like', async(req, res, next) => {
 
 router.delete('/like', async (req, res, next) => {
     try {
-        const post = await Post.find({where: {id: req.params.id}});
-        await post.Liker(req.user.id);
+        const post = await Post.findOne({where: {id: req.params.id}});
+        await post.Likers(req.user.id);
         //const like = twit && twit.Liker.map(l => l.id).includes(user.id);
         res.send('OK');
     } catch (error) {
