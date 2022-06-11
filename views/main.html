@@ -53,6 +53,15 @@
             </div>
             {% endif %}
 
+            {% if not likerIdList.includes(twit.User.id) and twit.User.id !== user.id %}
+            {% if user and not like %}
+            <button class = "like">좋아요</button>
+            {% endif %}
+            {% endif %}
+            {% if user and like %}
+            <div id="unlike" onClick='removeLiker({{twit.User.id}})' class="btn">좋아요 취소</div>
+            {% endif %}
+
             <!-- 댓글 시작 -->
             {# 1. user가 존재하는 경우 #}
             {% if user %}
@@ -178,5 +187,46 @@
             }
         });
     });
+
+    document.querySelectorAll('.like').forEach(function(tag) { 
+            tag.addEventListener('click', function() {
+                const myId = document.querySelector('#my-id'); 
+                if(myId){
+                    const twitId = tag.parentNode.querySelector('.twit-id').value; 
+                    if(twitId !== myId.value){
+                        if(confirm('좋아요를 누르시겠습니까?')){
+                            axios.post(`post/${twitId}/like`) 
+                            .then(() =>{
+                                location.reload();
+                            })
+                            .catch((err)=>{
+                                console.error(err);
+                            }); 
+                        }
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.unlike').forEach(function(tag) { 
+            tag.addEventListener('click', function() {
+                const myId = document.querySelector('#my-id'); 
+                if(myId){
+                    const twitId = tag.parentNode.querySelector('.twit-id').value; 
+                    if(twitId == myId.value){
+                        if(confirm('좋아요를 취소 하시겠습니까?')){
+                            axios.delete(`post/${twitId}/like`) 
+                            .then(() =>{
+                                location.reload();
+                            })
+                            .catch((err)=>{
+                                console.error(err);
+                            }); 
+                        }
+                    }
+                }
+            });
+        });
+
 </script>
 {% endblock %}

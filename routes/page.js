@@ -12,6 +12,7 @@ router.use((req, res, next) => {
   res.locals.followerCount = req.user ? req.user.Followers.length : 0; // 유저가 있는 경우 팔로워 수를 저장
   res.locals.followingCount = req.user ? req.user.Followings.length : 0;
   res.locals.followerIdList = req.user ? req.user.Followings.map(f => f.id) : []; // 팔로워 아이디 리스트를 넣는 이유 -> 팔로워 아이디 리스트에 게시글 작성자의 아이디가 존재하지 않으면 팔로우 버튼을 보여주기 위함
+  res.locals.likerIdList = req.post ? req.post.Liker.map(l => l.id) : [];
   next();
 });
 
@@ -56,12 +57,17 @@ router.get('/', async (req, res, next) => {
     //게시글 조회
     const posts = await Post.findAll({// db에서 게시글을 조회
 
-      include: {
+      include: [{
         model: User,
         attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
-      },
-      order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
+      }, {
+        model: User,
+        attributes: ['id', 'nick'],
+        as: 'Liker',
+      }]
+      //order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
     });
+    console.log(posts); 
     //댓글 조회
     const comments = await Comment.findAll({ // db에서 게시글을 조회 
       include: {
@@ -69,8 +75,8 @@ router.get('/', async (req, res, next) => {
         attributes: ["id", "nick"], // id와 닉네임을 join해서 제공
       },
       order: [["createdAt", "DESC"]], // 게시글의 순서를 최신순으로 정렬
+    
     });
-
     res.render("main", {
       title: "sns",
       twits: posts,
