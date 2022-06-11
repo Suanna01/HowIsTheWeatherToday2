@@ -39,7 +39,9 @@
             {# followerIdList: routes/page.js에서 res.locals에서 넣은 변수 #}
             {% if not followerIdList.includes(twit.User.id) and twit.User.id !== user.id %} {# 작성자를 제외하고, 나의 팔로워 아이디 목록에
             작성자의 아이디가 없으면 팔로우 버튼을 보여주기 위함 #}
+            {% if user %}
             <button class="twit-follow">팔로우하기</button> {# 아래의 js 코드가 class 명(twit-follow)으로 동작 실행 #}
+            {% endif %}
             {% endif %}
             <div class="twit-content">{{twit.content}}</div>
 
@@ -55,7 +57,7 @@
 
             {% if not likerIdList.includes(twit.User.id) and twit.User.id !== user.id %}
             {% if user and not like %}
-            <button class = "like">좋아요</button>
+            <button class="like">좋아요</button>
             {% endif %}
             {% endif %}
             {% if user and like %}
@@ -188,45 +190,45 @@
         });
     });
 
-    document.querySelectorAll('.like').forEach(function(tag) { 
-            tag.addEventListener('click', function() {
-                const myId = document.querySelector('#my-id'); 
-                if(myId){
-                    const twitId = tag.parentNode.querySelector('.twit-id').value; 
-                    if(twitId !== myId.value){
-                        if(confirm('좋아요를 누르시겠습니까?')){
-                            axios.post(`post/${twitId}/like`) 
-                            .then(() =>{
+    document.querySelectorAll('.like').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id');
+            if (myId) {
+                const twitId = tag.parentNode.querySelector('.twit-id').value;
+                if (twitId !== myId.value) {
+                    if (confirm('좋아요를 누르시겠습니까?')) {
+                        axios.post(`post/${twitId}/like`)
+                            .then(() => {
                                 location.reload();
                             })
-                            .catch((err)=>{
+                            .catch((err) => {
                                 console.error(err);
-                            }); 
-                        }
+                            });
                     }
                 }
-            });
+            }
         });
+    });
 
-        document.querySelectorAll('.unlike').forEach(function(tag) { 
-            tag.addEventListener('click', function() {
-                const myId = document.querySelector('#my-id'); 
-                if(myId){
-                    const twitId = tag.parentNode.querySelector('.twit-id').value; 
-                    if(twitId == myId.value){
-                        if(confirm('좋아요를 취소 하시겠습니까?')){
-                            axios.delete(`post/${twitId}/like`) 
-                            .then(() =>{
+    document.querySelectorAll('.unlike').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id');
+            if (myId) {
+                const twitId = tag.parentNode.querySelector('.twit-id').value;
+                if (twitId == myId.value) {
+                    if (confirm('좋아요를 취소 하시겠습니까?')) {
+                        axios.delete(`post/${twitId}/like`)
+                            .then(() => {
                                 location.reload();
                             })
-                            .catch((err)=>{
+                            .catch((err) => {
                                 console.error(err);
-                            }); 
-                        }
+                            });
                     }
                 }
-            });
+            }
         });
+    });
 
 </script>
 {% endblock %}
