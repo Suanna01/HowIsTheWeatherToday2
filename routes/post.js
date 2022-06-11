@@ -43,6 +43,7 @@ router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {// uploa
         const post = await Post.create({
             content: req.body.content,
             img: req.body.url, // req.body.url: 이미지 주소가 저장되어있는 곳
+            UserId: req.user.id,
         });
         const hashtags = req.body.content.match(/#[^\s#]+/g); // /#[%\s#]: 해시태그 정규표현식
 
