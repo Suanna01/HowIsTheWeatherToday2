@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const qs = require("querystring");
+const { Post, Comment, User, Hashtag } = require('../models');
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.get("/", (req,res) => {
     //오늘 날짜
     let day = new Date();
     let month = day.getMonth() + 1;  // 월(month) 보정
-    let today = day.getFullYear() + '.' + month + '.' + day.getDate();
+    today = day.getFullYear() + '.' + month + '.' + day.getDate();
 
     //지역에 따른 날씨
     area ="성북구";
@@ -54,6 +55,7 @@ router.get("/", (req,res) => {
     getHtml()
     .then(html => {
         let ulList = [];
+        /*
         const $ = cheerio.load(html.data);
         const $nowTemp = $("div.temperature_text").find('strong').text();
         const $maxTemp = $("div.cell_temperature span.temperature_inner").find('span.highest').text();
@@ -66,6 +68,20 @@ router.get("/", (req,res) => {
         let maxTemp = $maxTemp.substring(4, 7);
         let minTemp = $minTemp.substring(4, 7);
         let now = $now.substring(12, 17);
+        */
+
+        const $ = cheerio.load(html.data);
+        const $nowTemp = $("div.temperature_text").find('strong').text();
+        const $maxTemp = $("div.cell_temperature span.temperature_inner").find('span.highest').text();
+        const $minTemp = $("div.cell_temperature span.temperature_inner").find('span.lowest').text();
+        $sky = $("div.temperature_info").find('span.weather.before_slash').text();
+        const $now = $("div.relate_info._related_info dl.info").find('dd').text();
+        
+        //문자열 추출
+        nowTemp = $nowTemp.substring(5, 10);
+        maxTemp = $maxTemp.substring(4, 7);
+        minTemp = $minTemp.substring(4, 7);
+        now = $now.substring(12, 17);
   
         //Test
         console.log(nowTemp);
@@ -80,5 +96,34 @@ router.get("/", (req,res) => {
         today: today, now: now, sky: $sky, area: area});
     });
 })
+
+
+// http://127.0.0.1:8001/weather/hashtag 에 get요청이 왔을 때
+router.get('/hashtag', async (req, res, next) => {
+    const query = req.query.hashtag; // router.get은 req.body를 쓰지 않고 req.query로 값 전달
+    if (!query) { // query가 없는 경우(해시태그가 없는 경우)
+      return res.redirect('/'); // 메인페이지로 돌려보냄
+    }
+    // query가 있는 경우(해시태그가 있는 경우)
+    try {
+      const hashtag = await Hashtag.findOne({
+        where: { title: query }
+      }); // 해당 query 값이 Hashtag 테이블에 있는지 검색  
+      let posts = [];
+      if (hashtag) {
+        posts = await hashtag.getPosts({ include: [{ model: User }] }); // 있으면 해당 해시태그를 가진 모든 게시글을 가져옴
+      }
+      return res.render('weather', {
+        title: `현재날씨 - ${query}|sns`,
+        twits: posts, // 조회 후 views/main.html 페이지를 렌더링하면서 전체 게시글 대신 조회된 게시글만 twits에 넣어 렌더링 함 
+        nowTemp: nowTemp, maxTemp: maxTemp, minTemp: minTemp,
+        today: today, now: now, sky: $sky, area: area
+      });
+    } catch (error) {
+      console.error(error);
+      return next(error);
+    }
+  });
+
 
 module.exports = router;
