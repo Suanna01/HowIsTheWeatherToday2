@@ -2,9 +2,15 @@
 
 <h3>체질별, 위치별, 온도별로 알맞는 옷차림을 공유하는 웹사이트</h3>
 
-> 플랫폼 : Node.js </br>
-DB : MySQL</br>
-웹서버 : Google Cloud Platform(GCP)</br>
+> 2022-1 성신여대 서버시스템구축실습 팀프로젝트
+
+</br>
+
+|종류|내용|
+|------|---|
+|플랫폼|Node.js|
+|DB|MySQL|
+|웹서버|Google Cloud Platform(GCP)|
 
 <h2>Requirements</h2>
 별도로 제공되는 .env 파일이 있어야한다. </br>
