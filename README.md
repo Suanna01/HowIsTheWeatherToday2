@@ -16,12 +16,16 @@
 <h1>Manual</h1>
 
 <h2>Requirements</h2>
-1️⃣ 별도로 제공되는 .env 파일이 있어야한다. 민감한 내용이 담겨있어 별도로 따로 제공한다. </br> 
-2️⃣ Git Clone
+1️⃣ Git Clone </br>
 
 ```
 $ git clone https://github.com/Suanna01/HowIsTheWeatherToday2.git
 ```
+
+2️⃣ HowIsTheWeatherToday 폴더 바로 아래에 별도로 제공되는 .env 파일이 있어야한다. 민감한 내용이 담겨있어 별도로 따로 제공한다. </br> 
+![image](https://user-images.githubusercontent.com/86403488/174435785-643687a7-8d45-4c27-afed-0adf8b5f3378.png)
+
+
 
 <h2>Installation </h2>
 
