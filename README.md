@@ -39,6 +39,8 @@ $ npm install dotenv
 ```
 
 <h2>Execute</h2>
+1️⃣ GCP를 시작/재개한다. 개인정보가 담겨있어 별도로 따로 제공한다.  </br>
+2️⃣ 아래 실행 명령 입력
 
 ```
 $ npm start
